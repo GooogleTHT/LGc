@@ -1,0 +1,36 @@
+# version format
+version: 3.0.1.{build}
+
+# branches to build
+branches:
+  # only build master
+  only:
+    - master
+
+# build Release	
+configuration: Release
+
+skip_commits:
+  message: /Update.*\.(md|txt|mp3|png|jpg|jpeg|bmp|gif)/
+
+# restore NuGet packages before building
+before_build:
+- nuget restore
+
+# sigh *zip*
+after_build:
+- 7z a LegendaryClient.zip LegendaryClient\bin\Release
+- move LegendaryClient\bin\Release\Client\LegendaryClient.exe LegendaryClient.exe
+
+# define solution file
+build:
+  project: LegendaryClient.sln
+  
+  # shut up
+  verbosity: minimal
+
+artifacts:
+  - path: LegendaryClient.zip
+    name: LegendaryClient-Full
+  - path: LegendaryClient.exe
+    name: LegendaryClient-Executable
